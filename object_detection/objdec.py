@@ -158,6 +158,6 @@ def get_result(upload_folder, filename):
     # plt.imshow(image_np)
     # plt.show()
     print("hi2")
-    scipy.misc.imsave(os.path.join('result', filename), image_np)
+    scipy.misc.imsave(os.path.join('static', filename), image_np)
     os.remove(image_path)
     plt.close()

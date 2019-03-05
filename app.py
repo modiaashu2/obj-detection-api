@@ -5,7 +5,7 @@ from object_detection import objdec
 from flask_cors import CORS
 
 UPLOAD_FOLDER = 'uploads'
-SEND_FOLDER = 'result'
+SEND_FOLDER = 'static'
 ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg'])
 
 
@@ -18,6 +18,10 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+
+@app.route('/<path:path>')
+def static_file(path):
+	return app.send_static_file(path)
 
 @app.route('/detect', methods=['POST'])
 def detect():
