@@ -1,5 +1,5 @@
 import os
-from flask import Flask, request, make_response, jsonify, send_file
+from flask import Flask, request, make_response, jsonify, send_file, Response
 from werkzeug.utils import secure_filename
 from object_detection import objdec
 from flask_cors import CORS
@@ -31,14 +31,25 @@ def detect():
             return make_response(jsonify({"message": "No file uploaded"})), 400
 
         file = request.files['file']
+        print(file)
+        
+        if "." not in file.filename:
+            file.filename = file.filename + ".jpg"
 
         if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
+            filename = file.filename
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
             objdec.get_result(app.config['UPLOAD_FOLDER'], filename)
+            print("Opening image")
             img = open(os.path.join(SEND_FOLDER, filename), 'rb')
+            print("Opened ", filename)
+            a_name = filename.split(".")[0] + ".jpg"
             # os.remove(os.path.join(SEND_FOLDER, filename))
-            return send_file(img, mimetype='image/jpg', as_attachment=True, attachment_filename=filename + '_.jpg')
+            resp = Response("Yoohoo")
+            resp.headers["imgname"] = filename
+            return resp, 200
+        else:
+            return make_response(jsonify({"message": "File not found"})), 400
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
